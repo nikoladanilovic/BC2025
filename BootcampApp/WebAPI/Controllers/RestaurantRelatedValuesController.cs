@@ -60,7 +60,7 @@ namespace WebAPI.Controllers
         {
             var dish = listOfAvailableDishes.FirstOrDefault(p => p.Id == id);
             if (dish == null)
-                return NotFound();
+                return Content("There is not any dish with id: " + id);
 
             return Ok(dish);
         }
@@ -69,7 +69,17 @@ namespace WebAPI.Controllers
         [HttpPut("{id}")]
         public IActionResult ChangeDish(int id, [FromBody] RestaurantOrder dish)
         {
+            bool hasDishWithId = listOfAvailableDishes.Any(p => p.Id == id);
+            if (!hasDishWithId)
+            {
+                return Content("There is not any dish with id: " + id);
+            }
             var dishToBeChanged = listOfAvailableDishes.FirstOrDefault(p => p.Id == id);
+
+            if (!ModelState.IsValid)
+            {
+                return Content("Types of input values are not correct.");
+            }
             dishToBeChanged.DishName = dish.DishName;
             dishToBeChanged.PriceOfDish = dish.PriceOfDish;
             if (dishToBeChanged == null)
