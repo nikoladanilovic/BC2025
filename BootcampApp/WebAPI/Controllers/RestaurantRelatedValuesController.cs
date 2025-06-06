@@ -47,6 +47,16 @@ namespace WebAPI.Controllers
         //{
         //}
 
+        [HttpGet]
+        public IActionResult GetTheMenu()
+        {
+            //var dish = listOfAvailableDishes.FirstOrDefault(p => p.Id == id);
+            if (listOfAvailableDishes == null)
+                return Content("There are not any dishes on the menu.");
+
+            return Ok(listOfAvailableDishes);
+        }
+
         [HttpPost]
         public IActionResult CreateDish([FromBody] RestaurantOrder dish)
         {
