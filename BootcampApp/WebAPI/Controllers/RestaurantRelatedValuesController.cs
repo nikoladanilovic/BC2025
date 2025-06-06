@@ -75,6 +75,8 @@ namespace WebAPI.Controllers
             return Ok(dish);
         }
 
+
+        //moze se napisati (kasnije probaj) -->   public IActionResult ChangeDish(int id, [FromBody] List<RestaurantOrder> dish)
         // PUT api/<RestaurantRelatedValuesController>/5
         [HttpPut("{id}")]
         public IActionResult ChangeDish(int id, [FromBody] RestaurantOrder dish)
