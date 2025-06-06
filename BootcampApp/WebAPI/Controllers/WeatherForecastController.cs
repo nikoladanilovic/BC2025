@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
             _logger = logger;
         }
 
-        [HttpGet("get-forecast")]
+        [HttpGet("get-forecasttt")]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
