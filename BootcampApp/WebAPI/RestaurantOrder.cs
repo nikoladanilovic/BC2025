@@ -6,8 +6,14 @@ namespace WebAPI
     {
         public int Id { get; set; }
         // kasnije treba nesto dodati tipa [required] ...
+
+        [Required(ErrorMessage = "Username is required.")]
+        [StringLength(20, MinimumLength = 3, ErrorMessage = "Username must be between 3 and 20 characters.")]
         public string DishName { get; set; }
-        public double PriceOfDish { get; set; }
+
+        [Required]
+        [Range(1.0, 120.0)] // restrict age range
+        public double PriceOfDish { get; set; } 
 
     }
 }

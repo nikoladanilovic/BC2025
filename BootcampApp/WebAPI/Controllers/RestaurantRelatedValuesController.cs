@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,44 +9,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class RestaurantRelatedValuesController : ControllerBase
     {
-        ////GET: api/<RestaurantRelatedValuesController>
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        ////GET api/<RestaurantRelatedValuesController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
         private static List<RestaurantOrder> listOfAvailableDishes = new List<RestaurantOrder>();
-
-        private static readonly string[] DishNames = new[]
-        {
-            "Spagetti", "Pork", "Lamb", "Crabs", "Shrimps"
-        };
-
-        //[HttpGet("get-menu")]
-        //public IEnumerable<RestaurantOrder> Get()
-        //{
-        //    return Enumerable.Range(1, 5).Select(index => new RestaurantOrder
-        //    {
-        //        Id = Guid.NewGuid().ToString(),
-        //        DishName = DishNames[Random.Shared.Next(DishNames.Length)],
-        //        PriceOfDish = Random.Shared.Next(-20, 55)
-        //    })
-        //    .ToArray();
-        //}
-
-        // POST api/<RestaurantRelatedValuesController>
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
 
         [HttpGet]
         public IActionResult GetTheMenu()
@@ -75,9 +39,6 @@ namespace WebAPI.Controllers
             return Ok(dish);
         }
 
-
-        //moze se napisati (kasnije probaj) -->   public IActionResult ChangeDish(int id, [FromBody] List<RestaurantOrder> dish)
-        // PUT api/<RestaurantRelatedValuesController>/5
         [HttpPut("{id}")]
         public IActionResult ChangeDish(int id, [FromBody] RestaurantOrder dish)
         {
@@ -90,7 +51,7 @@ namespace WebAPI.Controllers
 
             if (!ModelState.IsValid)
             {
-                return Content("Types of input values are not correct.");
+                return BadRequest(ModelState);
             }
             dishToBeChanged.DishName = dish.DishName;
             dishToBeChanged.PriceOfDish = dish.PriceOfDish;
@@ -100,7 +61,6 @@ namespace WebAPI.Controllers
             return Ok(dishToBeChanged);
         }
 
-        // DELETE api/<RestaurantRelatedValuesController>/5
         [HttpDelete("{id}")]
         public string Delete(int id)
         {
@@ -115,6 +75,26 @@ namespace WebAPI.Controllers
                 return "There is no dish with the id value " + id;
             }
             
+        }
+
+        [HttpPost("insert-menu")]
+        public IActionResult CreateWholeMenu([FromBody] List<RestaurantOrder> dishes)
+        {
+            var addedNumberOfDishes = dishes.Count;
+            var currentNumberOfDishes = listOfAvailableDishes.Count;
+            if (addedNumberOfDishes != 0)
+            {
+                foreach (RestaurantOrder dish in dishes)
+                {
+                    dish.Id = listOfAvailableDishes.Count + 1;
+                    listOfAvailableDishes.Add(dish);
+                }
+                return Content(addedNumberOfDishes + " dishes were added to the menu.");
+            }
+            else
+            {
+                return Content("No dishes were added to the menu.");
+            }
         }
 
     }
