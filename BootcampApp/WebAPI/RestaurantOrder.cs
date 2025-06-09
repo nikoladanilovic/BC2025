@@ -16,5 +16,6 @@ namespace WebAPI
         [Range(1.0, 120.0)] // restrict age range
         public double PriceOfDish { get; set; } 
 
+        public Guid CategoryId { get; set; }
     }
 }

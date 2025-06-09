@@ -11,35 +11,60 @@ namespace WebAPI.Controllers
     public class RestaurantRelatedValuesController : ControllerBase
     {
         private static List<RestaurantOrder> listOfAvailableDishes = new List<RestaurantOrder>();
+        private static List<MenuCategory> listOfMenuCategories = new List<MenuCategory>();
 
         private readonly string _connectionString = "Host=localhost;Port=5432;Username=postgres;Password=admin1235;Database=postgres";
 
         private readonly DataAccess _dataAccess = new DataAccess();
 
-        [HttpGet]
+        [HttpGet("get-menu-items")]
         public IActionResult GetTheMenu()
         {
             listOfAvailableDishes = _dataAccess.GetDishes();
             return Ok(listOfAvailableDishes);
         }
 
-        
-        [HttpPost]     
-        public async Task<IActionResult> CreateDish([FromBody] RestaurantOrder dish)
+        [HttpGet("get-menu-categories")]
+        public IActionResult GetTheMenuCategories()
+        {
+            listOfMenuCategories = _dataAccess.GetMenuCategory();
+            return Ok(listOfMenuCategories);
+        }
+
+
+        [HttpPost("post-menu-item")]     
+        public async Task<IActionResult> CreateMenuItem([FromBody] RestaurantOrder dish)
         {
             using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            var cmd = new NpgsqlCommand("INSERT INTO \"Menu\" VALUES (uuid_generate_v4(), @name, @price)", connection);
+            var cmd = new NpgsqlCommand("INSERT INTO \"MenuItems\" VALUES (uuid_generate_v4(), @name, @price, @categoryId)", connection);
             cmd.Parameters.AddWithValue("name", dish.DishName);
             cmd.Parameters.AddWithValue("price", dish.PriceOfDish);
+            cmd.Parameters.AddWithValue("categoryId", dish.CategoryId);
 
             int rowsAffected = await cmd.ExecuteNonQueryAsync();
 
             return rowsAffected > 0 ? Ok("Dish added.") : StatusCode(500, "Insert failed.");
         }
 
-        [HttpPut("{selectedName}")]     //bolje selektirati s uuid -jem
+        [HttpPost("post-menu-category")]
+        public async Task<IActionResult> CreateMenuCategory([FromBody] MenuCategory category)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var cmd = new NpgsqlCommand("INSERT INTO \"MenuCategories\" VALUES (uuid_generate_v4(), @name)", connection);
+            cmd.Parameters.AddWithValue("name", category.Name);
+
+            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+            return rowsAffected > 0 ? Ok("Category added.") : StatusCode(500, "Insert failed.");
+        }
+
+
+
+        [HttpPut("{selectedName}")]     //TO DO: POPRAVI DA FUNKCIONIRA S NOVE DVIJE TABLICE - MenuItems i MenuCategories
         public async Task<IActionResult> ChangeDish(string selectedName, [FromBody] RestaurantOrder dish)
         {
             using var connection = new NpgsqlConnection(_connectionString);
@@ -56,7 +81,7 @@ namespace WebAPI.Controllers
 
         }
 
-        [HttpDelete("{selectedId}")]
+        [HttpDelete("{selectedId}")]        //TO DO: POPRAVI DA FUNKCIONIRA S NOVE DVIJE TABLICE - MenuItems i MenuCategories
         public async Task<IActionResult> Delete(Guid selectedId)
         {
             using var connection = new NpgsqlConnection(_connectionString);
