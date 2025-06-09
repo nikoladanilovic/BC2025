@@ -64,16 +64,33 @@ namespace WebAPI.Controllers
 
 
 
-        [HttpPut("{selectedName}")]     //TO DO: POPRAVI DA FUNKCIONIRA S NOVE DVIJE TABLICE - MenuItems i MenuCategories
-        public async Task<IActionResult> ChangeDish(string selectedName, [FromBody] RestaurantOrder dish)
+        [HttpPut("change-menu-item-with-id-{selectedId}")]
+        public async Task<IActionResult> ChangeMenuItem(Guid selectedId, [FromBody] RestaurantOrder dish)
         {
             using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            var cmd = new NpgsqlCommand("update \"Menu\" set \"DishName\" = @name, \"PriceOfDish\" = @price where \"DishName\" = @selectedName", connection);
+            var cmd = new NpgsqlCommand("update \"MenuItems\" set \"DishName\" = @name, \"PriceOfDish\" = @price, \"CategoryId\" = @categoryId where \"Id\" = @selectedId", connection);
             cmd.Parameters.AddWithValue("name", dish.DishName);
             cmd.Parameters.AddWithValue("price", dish.PriceOfDish);
-            cmd.Parameters.AddWithValue("selectedName", selectedName);
+            cmd.Parameters.AddWithValue("categoryId", dish.CategoryId);
+            cmd.Parameters.AddWithValue("selectedId", selectedId);
+
+            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+            return rowsAffected > 0 ? Ok("Dish changed.") : StatusCode(500, "Insert failed.");
+
+        }
+
+        [HttpPut("change-menu-category-with-id-{selectedId}")]
+        public async Task<IActionResult> ChangeMenuItem(Guid selectedId, [FromBody] MenuCategory category)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var cmd = new NpgsqlCommand("update \"MenuCategories\" set \"Name\" = @name where \"Id\" = @selectedId", connection);
+            cmd.Parameters.AddWithValue("name", category.Name);
+            cmd.Parameters.AddWithValue("selectedId", selectedId);
 
             int rowsAffected = await cmd.ExecuteNonQueryAsync();
 
