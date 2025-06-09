@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Npgsql;
 using System.Runtime.CompilerServices;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,24 +12,66 @@ namespace WebAPI.Controllers
     {
         private static List<RestaurantOrder> listOfAvailableDishes = new List<RestaurantOrder>();
 
+        private readonly string _connectionString = "Host=localhost;Port=5432;Username=postgres;Password=admin1235;Database=postgres";
+
+        private readonly DataAccess _dataAccess = new DataAccess();
+
         [HttpGet]
         public IActionResult GetTheMenu()
         {
-            //var dish = listOfAvailableDishes.FirstOrDefault(p => p.Id == id);
-            if (listOfAvailableDishes == null)
-                return Content("There are not any dishes on the menu.");
-
+            listOfAvailableDishes = _dataAccess.GetDishes();
             return Ok(listOfAvailableDishes);
         }
 
-        [HttpPost]
-        public IActionResult CreateDish([FromBody] RestaurantOrder dish)
+        
+        [HttpPost]     
+        public async Task<IActionResult> CreateDish([FromBody] RestaurantOrder dish)
         {
-            dish.Id = listOfAvailableDishes.Count + 1;
-            listOfAvailableDishes.Add(dish);
-            return CreatedAtAction(nameof(GetDishById), new { id = dish.Id }, dish);
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var cmd = new NpgsqlCommand("INSERT INTO \"Menu\" VALUES (uuid_generate_v4(), @name, @price)", connection);
+            cmd.Parameters.AddWithValue("name", dish.DishName);
+            cmd.Parameters.AddWithValue("price", dish.PriceOfDish);
+
+            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+            return rowsAffected > 0 ? Ok("Dish added.") : StatusCode(500, "Insert failed.");
         }
 
+        [HttpPut("{selectedName}")]     //bolje selektirati s uuid -jem
+        public async Task<IActionResult> ChangeDish(string selectedName, [FromBody] RestaurantOrder dish)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var cmd = new NpgsqlCommand("update \"Menu\" set \"DishName\" = @name, \"PriceOfDish\" = @price where \"DishName\" = @selectedName", connection);
+            cmd.Parameters.AddWithValue("name", dish.DishName);
+            cmd.Parameters.AddWithValue("price", dish.PriceOfDish);
+            cmd.Parameters.AddWithValue("selectedName", selectedName);
+
+            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+            return rowsAffected > 0 ? Ok("Dish changed.") : StatusCode(500, "Insert failed.");
+
+        }
+
+        [HttpDelete("{selectedId}")]
+        public async Task<IActionResult> Delete(Guid selectedId)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var cmd = new NpgsqlCommand("delete from \"Menu\" where \"id\" = @selectedId;", connection);
+            cmd.Parameters.AddWithValue("selectedId", selectedId);
+
+            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+            return rowsAffected > 0 ? Ok("Dish changed.") : StatusCode(500, "Insert failed.");
+
+        }
+
+        /*
         [HttpGet("{id}")]
         public IActionResult GetDishById(int id)
         {
@@ -96,6 +139,6 @@ namespace WebAPI.Controllers
                 return Content("No dishes were added to the menu.");
             }
         }
-
+        */
     }
 }

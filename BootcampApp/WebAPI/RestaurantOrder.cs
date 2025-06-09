@@ -4,7 +4,8 @@ namespace WebAPI
 {
     public class RestaurantOrder
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
+        //public int Id { get; set; }
         // kasnije treba nesto dodati tipa [required] ...
 
         [Required(ErrorMessage = "Username is required.")]
