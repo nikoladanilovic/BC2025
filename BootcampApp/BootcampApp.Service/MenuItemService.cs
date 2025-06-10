@@ -14,13 +14,22 @@ namespace BootcampApp.Service
 
         public List<MenuItemModel> GetMenuItems()
         {
-            // Example logic: could add filtering, validation, etc.
             return _repository.GetMenuItems();
         }
 
         public bool AddMenuItem(MenuItemModel menuItem)
         {
             return _repository.AddMenuItem(menuItem);
+        }
+
+        public async Task<bool> ChangeMenuItem(MenuItemModel menuItem, Guid selectedId)
+        {
+            return await _repository.ChangeMenuItem(menuItem, selectedId);
+        }
+
+        public async Task<bool> RemoveMenuItem(Guid selectedId)
+        {
+            return await _repository.RemoveMenuItem(selectedId);
         }
     }
 }

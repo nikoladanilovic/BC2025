@@ -58,5 +58,33 @@ namespace BootcampApp.Repository
 
             return rowsAffected > 0 ? true : false;
         }
+
+        public async Task<bool> ChangeMenuItem(MenuItemModel menuItem, Guid selectedId)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var cmd = new NpgsqlCommand("update \"MenuItems\" set \"DishName\" = @name, \"PriceOfDish\" = @price, \"CategoryId\" = @categoryId where \"Id\" = @selectedId", connection);
+            cmd.Parameters.AddWithValue("name", menuItem.DishName);
+            cmd.Parameters.AddWithValue("price", menuItem.PriceOfDish);
+            cmd.Parameters.AddWithValue("categoryId", menuItem.CategoryId);
+            cmd.Parameters.AddWithValue("selectedId", selectedId);
+
+            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+            return rowsAffected > 0 ? true : false;
+        }
+
+        public async Task<bool> RemoveMenuItem(Guid selectedId)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var cmd = new NpgsqlCommand("delete from \"MenuItems\" where \"Id\" = @selectedId;", connection);
+            cmd.Parameters.AddWithValue("selectedId", selectedId);
+
+            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+            return rowsAffected > 0 ? true : false;
+        }
     }
 }
