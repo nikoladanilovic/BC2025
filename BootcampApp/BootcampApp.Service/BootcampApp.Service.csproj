@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BootcampApp.Model\BootcampApp.Model.csproj" />
+    <ProjectReference Include="..\BootcampApp.Repository\BootcampApp.Repository.csproj" />
+  </ItemGroup>
+
 </Project>

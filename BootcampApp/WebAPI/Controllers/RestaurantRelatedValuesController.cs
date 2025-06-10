@@ -24,14 +24,6 @@ namespace WebAPI.Controllers
             return Ok(listOfAvailableDishes);
         }
 
-        [HttpGet("get-menu-categories")]
-        public IActionResult GetTheMenuCategories()
-        {
-            listOfMenuCategories = _dataAccess.GetMenuCategory();
-            return Ok(listOfMenuCategories);
-        }
-
-
         [HttpPost("post-menu-item")]     
         public async Task<IActionResult> CreateMenuItem([FromBody] RestaurantOrder dish)
         {
@@ -48,22 +40,7 @@ namespace WebAPI.Controllers
             return rowsAffected > 0 ? Ok("Dish added.") : StatusCode(500, "Insert failed.");
         }
 
-        [HttpPost("post-menu-category")]
-        public async Task<IActionResult> CreateMenuCategory([FromBody] MenuCategory category)
-        {
-            using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-
-            var cmd = new NpgsqlCommand("INSERT INTO \"MenuCategories\" VALUES (uuid_generate_v4(), @name)", connection);
-            cmd.Parameters.AddWithValue("name", category.Name);
-
-            int rowsAffected = await cmd.ExecuteNonQueryAsync();
-
-            return rowsAffected > 0 ? Ok("Category added.") : StatusCode(500, "Insert failed.");
-        }
-
-
-
+        
         [HttpPut("change-menu-item-with-id-{selectedId}")]
         public async Task<IActionResult> ChangeMenuItem(Guid selectedId, [FromBody] RestaurantOrder dish)
         {
@@ -82,36 +59,23 @@ namespace WebAPI.Controllers
 
         }
 
-        [HttpPut("change-menu-category-with-id-{selectedId}")]
-        public async Task<IActionResult> ChangeMenuItem(Guid selectedId, [FromBody] MenuCategory category)
+        
+
+        [HttpDelete("delete-menu-item-with-id-{selectedId}")]   
+        public async Task<IActionResult> DeleteMenuItem(Guid selectedId)
         {
             using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            var cmd = new NpgsqlCommand("update \"MenuCategories\" set \"Name\" = @name where \"Id\" = @selectedId", connection);
-            cmd.Parameters.AddWithValue("name", category.Name);
+            var cmd = new NpgsqlCommand("delete from \"MenuItems\" where \"Id\" = @selectedId;", connection);
             cmd.Parameters.AddWithValue("selectedId", selectedId);
 
             int rowsAffected = await cmd.ExecuteNonQueryAsync();
 
             return rowsAffected > 0 ? Ok("Dish changed.") : StatusCode(500, "Insert failed.");
-
         }
 
-        [HttpDelete("{selectedId}")]        //TO DO: POPRAVI DA FUNKCIONIRA S NOVE DVIJE TABLICE - MenuItems i MenuCategories
-        public async Task<IActionResult> Delete(Guid selectedId)
-        {
-            using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-
-            var cmd = new NpgsqlCommand("delete from \"Menu\" where \"id\" = @selectedId;", connection);
-            cmd.Parameters.AddWithValue("selectedId", selectedId);
-
-            int rowsAffected = await cmd.ExecuteNonQueryAsync();
-
-            return rowsAffected > 0 ? Ok("Dish changed.") : StatusCode(500, "Insert failed.");
-
-        }
+        
 
         /*
         [HttpGet("{id}")]
