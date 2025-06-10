@@ -2,6 +2,7 @@
 using Npgsql;
 using System.Runtime.CompilerServices;
 using BootcampApp.Service;
+using BootcampApp.Model;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,7 +21,7 @@ namespace WebAPI.Controllers
         private readonly DataAccess _dataAccess = new DataAccess();
 
         [HttpGet("get-menu-items")]
-        public IActionResult GetTheMenu()
+        public IActionResult GetTheMenu()   //MULITLAYER ARCHITECTURE IMPLEMENTED
         {
             //listOfAvailableDishes = _dataAccess.GetDishes();
             //return Ok(listOfAvailableDishes);
@@ -29,19 +30,26 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("post-menu-item")]     
-        public async Task<IActionResult> CreateMenuItem([FromBody] RestaurantOrder dish)
+        public IActionResult CreateMenuItem([FromBody] MenuItemModel menuItem)
         {
-            using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
+            //using var connection = new NpgsqlConnection(_connectionString);
+            //await connection.OpenAsync();
 
-            var cmd = new NpgsqlCommand("INSERT INTO \"MenuItems\" VALUES (uuid_generate_v4(), @name, @price, @categoryId)", connection);
-            cmd.Parameters.AddWithValue("name", dish.DishName);
-            cmd.Parameters.AddWithValue("price", dish.PriceOfDish);
-            cmd.Parameters.AddWithValue("categoryId", dish.CategoryId);
+            //var cmd = new NpgsqlCommand("INSERT INTO \"MenuItems\" VALUES (uuid_generate_v4(), @name, @price, @categoryId)", connection);
+            //cmd.Parameters.AddWithValue("name", dish.DishName);
+            //cmd.Parameters.AddWithValue("price", dish.PriceOfDish);
+            //cmd.Parameters.AddWithValue("categoryId", dish.CategoryId);
 
-            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+            //int rowsAffected = await cmd.ExecuteNonQueryAsync();
 
-            return rowsAffected > 0 ? Ok("Dish added.") : StatusCode(500, "Insert failed.");
+            //return rowsAffected > 0 ? Ok("Dish added.") : StatusCode(500, "Insert failed.");
+            
+            
+            bool isAdded = service.AddMenuItem(menuItem);
+            var menuItems = service.GetMenuItems();
+            return Ok(menuItems);
+            //return isAdded ? Ok("Dish added.") : StatusCode(500, "Insert failed.");
+            
         }
 
         

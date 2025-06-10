@@ -18,12 +18,9 @@ namespace BootcampApp.Service
             return _repository.GetMenuItems();
         }
 
-        //public void CreateCustomer(Customer customer)
-        //{
-        //    if (string.IsNullOrWhiteSpace(customer.Name))
-        //        throw new ArgumentException("Customer name is required.");
-
-        //    _repository.AddCustomer(customer);
-        //}
+        public bool AddMenuItem(MenuItemModel menuItem)
+        {
+            return _repository.AddMenuItem(menuItem);
+        }
     }
 }
