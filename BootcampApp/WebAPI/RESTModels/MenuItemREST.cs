@@ -11,5 +11,13 @@ namespace WebAPI.RESTModels
         public double PriceOfDish { get; set; }
 
         public Guid CategoryId { get; set; }
+
+        public MenuItemREST(Guid Id, string DishName, double PriceOfDish, Guid CategoryId)
+        {
+            this.Id = Id;
+            this.DishName = DishName;
+            this.PriceOfDish = PriceOfDish;
+            this.CategoryId = CategoryId;
+        }
     }
 }

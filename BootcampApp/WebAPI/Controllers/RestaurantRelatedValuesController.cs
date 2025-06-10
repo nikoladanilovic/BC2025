@@ -3,6 +3,7 @@ using Npgsql;
 using System.Runtime.CompilerServices;
 using BootcampApp.Service;
 using BootcampApp.Model;
+using WebAPI.RESTModels;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,8 +24,13 @@ namespace WebAPI.Controllers
         [HttpGet("get-menu-items")]
         public IActionResult GetTheMenu()
         {
-            var menuItems = service.GetMenuItems();     // Should map/convert from MenuItemModel to MenuItemREST
-            return Ok(menuItems);
+            //Converting from MenuItemModel to MenuItemREST
+            List<MenuItemREST> menuItemsReturned = new List<MenuItemREST>();
+            var menuItems = service.GetMenuItems();
+            foreach (var item in menuItems) {
+                menuItemsReturned.Add(new MenuItemREST(item.Id, item.DishName, item.PriceOfDish, item.CategoryId));
+            }
+            return Ok(menuItemsReturned);
         }
 
         [HttpPost("post-menu-item")]     
