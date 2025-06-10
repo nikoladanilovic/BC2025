@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using System.Runtime.CompilerServices;
+using BootcampApp.Service;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -10,6 +11,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class RestaurantRelatedValuesController : ControllerBase
     {
+        private MenuItemService service = new MenuItemService();
         private static List<RestaurantOrder> listOfAvailableDishes = new List<RestaurantOrder>();
         private static List<MenuCategory> listOfMenuCategories = new List<MenuCategory>();
 
@@ -20,8 +22,10 @@ namespace WebAPI.Controllers
         [HttpGet("get-menu-items")]
         public IActionResult GetTheMenu()
         {
-            listOfAvailableDishes = _dataAccess.GetDishes();
-            return Ok(listOfAvailableDishes);
+            //listOfAvailableDishes = _dataAccess.GetDishes();
+            //return Ok(listOfAvailableDishes);
+            var menuItems = service.GetMenuItems();
+            return Ok(menuItems);
         }
 
         [HttpPost("post-menu-item")]     
