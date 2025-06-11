@@ -16,6 +16,6 @@ namespace BootcampApp.Model
         public double PriceOfDish { get; set; }
 
         public Guid CategoryId { get; set; }
-        //public MenuCategoryModel Category { get; set; }
+        public MenuCategoryModel Category { get; set; }
     }
 }

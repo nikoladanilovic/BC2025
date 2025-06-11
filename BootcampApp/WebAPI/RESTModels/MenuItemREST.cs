@@ -13,15 +13,15 @@ namespace WebAPI.RESTModels
 
         public Guid CategoryId { get; set; }
 
-        //public MenuCategoryModel Category { get; set; }
+        public MenuCategoryModel Category { get; set; }
 
-        public MenuItemREST(Guid Id, string DishName, double PriceOfDish, Guid CategoryId /*, MenuCategoryModel category*/)
+        public MenuItemREST(Guid Id, string DishName, double PriceOfDish, Guid CategoryId , MenuCategoryModel category)
         {
             this.Id = Id;
             this.DishName = DishName;
             this.PriceOfDish = PriceOfDish;
             this.CategoryId = CategoryId;
-            //this.Category = category;
+            this.Category = category;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace WebAPI.Controllers
             List<MenuItemREST> menuItemsReturned = new List<MenuItemREST>();
             var menuItems = await service.GetMenuItems();
             foreach (var item in menuItems) {
-                menuItemsReturned.Add(new MenuItemREST(item.Id, item.DishName, item.PriceOfDish, item.CategoryId));
+                menuItemsReturned.Add(new MenuItemREST(item.Id, item.DishName, item.PriceOfDish, item.CategoryId, item.Category));
             }
             return Ok(menuItemsReturned);
         }
@@ -67,7 +67,7 @@ namespace WebAPI.Controllers
             var menuItems = await service.GetMenuItemsCategories(itemCategory, orderAscDesc);
             foreach (var item in menuItems)
             {
-                menuItemsReturned.Add(new MenuItemREST(item.Id, item.DishName, item.PriceOfDish, item.CategoryId));
+                menuItemsReturned.Add(new MenuItemREST(item.Id, item.DishName, item.PriceOfDish, item.CategoryId, item.Category));
             }
             return Ok(menuItemsReturned);
         }
