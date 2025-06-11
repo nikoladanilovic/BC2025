@@ -12,14 +12,14 @@ namespace BootcampApp.Service
     {
         private readonly MenuItemRepository _repository = new MenuItemRepository();
 
-        public List<MenuItemModel> GetMenuItems()
+        public async Task<List<MenuItemModel>> GetMenuItems()
         {
-            return _repository.GetMenuItems();
+            return await _repository.GetMenuItems();
         }
 
-        public bool AddMenuItem(MenuItemModel menuItem)
+        public async Task<bool> AddMenuItem(MenuItemModel menuItem)
         {
-            return _repository.AddMenuItem(menuItem);
+            return await _repository.AddMenuItem(menuItem);
         }
 
         public async Task<bool> ChangeMenuItem(MenuItemModel menuItem, Guid selectedId)

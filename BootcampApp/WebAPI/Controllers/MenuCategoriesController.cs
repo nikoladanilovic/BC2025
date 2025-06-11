@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BootcampApp.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
+using WebAPI.RESTModels;
+using BootcampApp.Model;
 
 namespace WebAPI.Controllers
 {
@@ -8,6 +11,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class MenuCategoriesController : Controller
     {
+        private MenuCategoryService service = new MenuCategoryService();
         private static List<RestaurantOrder> listOfAvailableDishes = new List<RestaurantOrder>();
         private static List<MenuCategory> listOfMenuCategories = new List<MenuCategory>();
 
@@ -16,55 +20,41 @@ namespace WebAPI.Controllers
         private readonly DataAccess _dataAccess = new DataAccess();
 
         [HttpGet("get-menu-categories")]
-        public IActionResult GetTheMenuCategories()
+        public async Task<IActionResult> GetTheMenuCategories()     //IMPLEMENTATION OF MULTILAYER ARCHITECTURE
         {
-            listOfMenuCategories = _dataAccess.GetMenuCategory();
-            return Ok(listOfMenuCategories);
+            List<MenuCategoryREST> menuCategoryReturned = new List<MenuCategoryREST>();
+            var menuCategories = await service.GetMenuCategory();
+            foreach (var category in menuCategories)
+            {
+                menuCategoryReturned.Add(new MenuCategoryREST(category.Id, category.Name));
+            }
+            return Ok(menuCategoryReturned);
         }
 
         [HttpPost("post-menu-category")]
-        public async Task<IActionResult> CreateMenuCategory([FromBody] MenuCategory category)
+        public async Task<IActionResult> CreateMenuCategory([FromBody] MenuCategoryModel category)      //IMPLEMENTATION OF MULTILAYER ARCHITECTURE
         {
-            using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-
-            var cmd = new NpgsqlCommand("INSERT INTO \"MenuCategories\" VALUES (uuid_generate_v4(), @name)", connection);
-            cmd.Parameters.AddWithValue("name", category.Name);
-
-            int rowsAffected = await cmd.ExecuteNonQueryAsync();
-
-            return rowsAffected > 0 ? Ok("Category added.") : StatusCode(500, "Insert failed.");
+            bool isAdded = await service.AddMenuCategory(category);
+            var menuCategories = await service.GetMenuCategory();
+            return isAdded ? Ok(menuCategories) : StatusCode(500, "Insert failed.");
         }
 
 
         [HttpPut("change-menu-category-with-id-{selectedId}")]
-        public async Task<IActionResult> ChangeMenuItem(Guid selectedId, [FromBody] MenuCategory category)
+        public async Task<IActionResult> ChangeMenuCategory(Guid selectedId, [FromBody] MenuCategoryModel category)
         {
-            using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-
-            var cmd = new NpgsqlCommand("update \"MenuCategories\" set \"Name\" = @name where \"Id\" = @selectedId", connection);
-            cmd.Parameters.AddWithValue("name", category.Name);
-            cmd.Parameters.AddWithValue("selectedId", selectedId);
-
-            int rowsAffected = await cmd.ExecuteNonQueryAsync();
-
-            return rowsAffected > 0 ? Ok("Dish changed.") : StatusCode(500, "Insert failed.");
+            bool isChanged = await service.ChangeMenuCategory(category, selectedId);
+            var menuCategories = await service.GetMenuCategory();
+            return isChanged ? Ok(menuCategories) : StatusCode(500, "Insert failed.");
 
         }
 
         [HttpDelete("delete-menu-category-with-id-{selectedId}")]
         public async Task<IActionResult> DeleteMenuCategory(Guid selectedId)
         {
-            using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-
-            var cmd = new NpgsqlCommand("delete from \"MenuCategories\" where \"Id\" = @selectedId;", connection);
-            cmd.Parameters.AddWithValue("selectedId", selectedId);
-
-            int rowsAffected = await cmd.ExecuteNonQueryAsync();
-
-            return rowsAffected > 0 ? Ok("Dish changed.") : StatusCode(500, "Insert failed.");
+            bool isRemoved = await service.RemoveMenuCategory(selectedId);
+            var menuCategories = await service.GetMenuCategory();
+            return isRemoved ? Ok(menuCategories) : StatusCode(500, "Insert failed.");
         }
 
     }

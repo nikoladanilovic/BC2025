@@ -14,7 +14,7 @@ namespace BootcampApp.Repository
         private readonly string _connectionString = "Host=localhost;Port=5432;Username=postgres;Password=admin1235;Database=postgres";
 
 
-        public List<MenuItemModel> GetMenuItems()
+        public async Task<List<MenuItemModel>> GetMenuItems()
         {
 
             var dishes = new List<MenuItemModel>();
@@ -22,12 +22,12 @@ namespace BootcampApp.Repository
 
             using (var conn = new NpgsqlConnection(_connectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();  //conn.Open(); // Uncomment if you want to use sync
 
                 using (var cmd = new NpgsqlCommand("SELECT * FROM \"MenuItems\"", conn))
-                using (var reader = cmd.ExecuteReader())
+                using (var reader = await cmd.ExecuteReaderAsync()) // cmd.ExecuteReader()  // Uncomment if you want to use sync
                 {
-                    while (reader.Read())
+                    while (await reader.ReadAsync())   // reader.Read(); // Uncomment if you want to use sync
                     {
                         MenuItemModel newDish = new MenuItemModel();
                         newDish.Id = reader.GetGuid(0);
@@ -44,17 +44,17 @@ namespace BootcampApp.Repository
 
         //public List<Customer> GetAllCustomers() => customers;
 
-        public bool AddMenuItem(MenuItemModel menuItem)
+        public async Task<bool> AddMenuItem(MenuItemModel menuItem)
         {
             using var connection = new NpgsqlConnection(_connectionString);
-            connection.Open();
+            await connection.OpenAsync();
 
             var cmd = new NpgsqlCommand("INSERT INTO \"MenuItems\" VALUES (uuid_generate_v4(), @name, @price, @categoryId)", connection);
             cmd.Parameters.AddWithValue("name", menuItem.DishName);
             cmd.Parameters.AddWithValue("price", menuItem.PriceOfDish);
             cmd.Parameters.AddWithValue("categoryId", menuItem.CategoryId);
 
-            int rowsAffected = cmd.ExecuteNonQuery();
+            int rowsAffected = await cmd.ExecuteNonQueryAsync();
 
             return rowsAffected > 0 ? true : false;
         }

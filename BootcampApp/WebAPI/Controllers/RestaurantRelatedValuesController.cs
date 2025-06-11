@@ -22,11 +22,11 @@ namespace WebAPI.Controllers
         private readonly DataAccess _dataAccess = new DataAccess();
 
         [HttpGet("get-menu-items")]
-        public IActionResult GetTheMenu()
+        public async Task<IActionResult> GetTheMenu()
         {
             //Converting from MenuItemModel to MenuItemREST
             List<MenuItemREST> menuItemsReturned = new List<MenuItemREST>();
-            var menuItems = service.GetMenuItems();
+            var menuItems = await service.GetMenuItems();
             foreach (var item in menuItems) {
                 menuItemsReturned.Add(new MenuItemREST(item.Id, item.DishName, item.PriceOfDish, item.CategoryId));
             }
@@ -34,10 +34,10 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("post-menu-item")]     
-        public IActionResult CreateMenuItem([FromBody] MenuItemModel menuItem)
+        public async Task<IActionResult> CreateMenuItem([FromBody] MenuItemModel menuItem)
         {
-            bool isAdded = service.AddMenuItem(menuItem);
-            var menuItems = service.GetMenuItems();
+            bool isAdded = await service.AddMenuItem(menuItem);
+            var menuItems = await service.GetMenuItems();
             return isAdded ? Ok(menuItems) : StatusCode(500, "Insert failed.");
         }
 
