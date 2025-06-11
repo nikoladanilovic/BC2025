@@ -46,7 +46,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> ChangeMenuItem(Guid selectedId, [FromBody] MenuItemModel menuItem)     
         {
             bool isChanged = await service.ChangeMenuItem(menuItem, selectedId);
-            var menuItems = service.GetMenuItems();
+            var menuItems = await service.GetMenuItems();
             return isChanged ? Ok(menuItems) : StatusCode(500, "Insert failed.");
 
         }
@@ -55,7 +55,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> DeleteMenuItem(Guid selectedId)
         {
             bool isRemoved = await service.RemoveMenuItem(selectedId);
-            var menuItems = service.GetMenuItems();
+            var menuItems = await service.GetMenuItems();
             return isRemoved ? Ok(menuItems) : StatusCode(500, "Insert failed.");
         }
 

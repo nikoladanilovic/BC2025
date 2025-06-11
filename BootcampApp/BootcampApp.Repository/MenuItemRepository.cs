@@ -79,18 +79,37 @@ namespace BootcampApp.Repository
             return rowsAffected > 0 ? true : false;
         }
 
-        public async Task<bool> ChangeMenuItem(MenuItemModel menuItem, Guid selectedId)
+        public async Task<bool> ChangeMenuItem(MenuItemModel menuItem, Guid selectedId)     
         {
+            int rowsAffected = 0;
             using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            var cmd = new NpgsqlCommand("update \"MenuItems\" set \"DishName\" = @name, \"PriceOfDish\" = @price, \"CategoryId\" = @categoryId where \"Id\" = @selectedId", connection);
-            cmd.Parameters.AddWithValue("name", menuItem.DishName);
-            cmd.Parameters.AddWithValue("price", menuItem.PriceOfDish);
-            cmd.Parameters.AddWithValue("categoryId", menuItem.CategoryId);
-            cmd.Parameters.AddWithValue("selectedId", selectedId);
+            if (await isForwardedCategoryIdUnique(menuItem.CategoryId))
+            {
+                var cmd = new NpgsqlCommand("INSERT INTO \"MenuCategories\" VALUES (@categoryId, @nameOfCategory); " +
+                    "update \"MenuItems\" set \"DishName\" = @name, \"PriceOfDish\" = @price, \"CategoryId\" = @categoryId " +
+                    "where \"Id\" = @selectedId; ", connection);
+                cmd.Parameters.AddWithValue("name", menuItem.DishName);
+                cmd.Parameters.AddWithValue("price", menuItem.PriceOfDish);
+                cmd.Parameters.AddWithValue("categoryId", menuItem.CategoryId);
+                cmd.Parameters.AddWithValue("nameOfCategory", menuItem.Category.Name);
+                cmd.Parameters.AddWithValue("selectedId", selectedId);
 
-            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                rowsAffected = await cmd.ExecuteNonQueryAsync();
+            }
+            else
+            {
+                var cmd = new NpgsqlCommand("update \"MenuItems\" set \"DishName\" = @name, \"PriceOfDish\" = @price, \"CategoryId\" = @categoryId " +
+                    "where \"Id\" = @selectedId; ", connection);
+                cmd.Parameters.AddWithValue("name", menuItem.DishName);
+                cmd.Parameters.AddWithValue("price", menuItem.PriceOfDish);
+                cmd.Parameters.AddWithValue("categoryId", menuItem.CategoryId);
+                cmd.Parameters.AddWithValue("selectedId", selectedId);
+
+                rowsAffected = await cmd.ExecuteNonQueryAsync();
+            }
+
             return rowsAffected > 0 ? true : false;
         }
 
@@ -118,7 +137,8 @@ namespace BootcampApp.Repository
                 await conn.OpenAsync();  //conn.Open(); // Uncomment if you want to use sync
 
                 using (var cmd = new NpgsqlCommand("select * from \"MenuItems\" mi " +
-                    " left join \"MenuCategories\" mc on mi.\"CategoryId\" = mc.\"Id\" where mc.\"Name\" = '" + itemCategory +
+                    " left join \"MenuCategories\" mc on mi.\"CategoryId\" = mc.\"Id\" " +
+                    " where mc.\"Name\" = '" + itemCategory +
                     "' order by mi.\"DishName\" " + orderAscDesc + " limit 5 offset 0;", conn))
                 using (var reader = await cmd.ExecuteReaderAsync()) // cmd.ExecuteReader()  // Uncomment if you want to use sync
                 {
