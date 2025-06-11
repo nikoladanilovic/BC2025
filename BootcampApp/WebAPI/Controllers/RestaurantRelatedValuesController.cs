@@ -59,5 +59,17 @@ namespace WebAPI.Controllers
             return isRemoved ? Ok(menuItems) : StatusCode(500, "Insert failed.");
         }
 
+        [HttpGet("get-menu-items-categories")]
+        public async Task<IActionResult> GetAllMenuItemCategory(string itemCategory, string orderAscDesc)
+        {
+            //Converting from MenuItemModel to MenuItemREST
+            List<MenuItemREST> menuItemsReturned = new List<MenuItemREST>();
+            var menuItems = await service.GetMenuItemsCategories(itemCategory, orderAscDesc);
+            foreach (var item in menuItems)
+            {
+                menuItemsReturned.Add(new MenuItemREST(item.Id, item.DishName, item.PriceOfDish, item.CategoryId));
+            }
+            return Ok(menuItemsReturned);
+        }
     }
 }

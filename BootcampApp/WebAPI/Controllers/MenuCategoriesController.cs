@@ -20,7 +20,7 @@ namespace WebAPI.Controllers
         private readonly DataAccess _dataAccess = new DataAccess();
 
         [HttpGet("get-menu-categories")]
-        public async Task<IActionResult> GetTheMenuCategories()     //IMPLEMENTATION OF MULTILAYER ARCHITECTURE
+        public async Task<IActionResult> GetTheMenuCategories() 
         {
             List<MenuCategoryREST> menuCategoryReturned = new List<MenuCategoryREST>();
             var menuCategories = await service.GetMenuCategory();
@@ -32,7 +32,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("post-menu-category")]
-        public async Task<IActionResult> CreateMenuCategory([FromBody] MenuCategoryModel category)      //IMPLEMENTATION OF MULTILAYER ARCHITECTURE
+        public async Task<IActionResult> CreateMenuCategory([FromBody] MenuCategoryModel category)    
         {
             bool isAdded = await service.AddMenuCategory(category);
             var menuCategories = await service.GetMenuCategory();

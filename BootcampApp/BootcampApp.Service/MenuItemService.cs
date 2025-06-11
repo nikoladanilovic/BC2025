@@ -31,5 +31,10 @@ namespace BootcampApp.Service
         {
             return await _repository.RemoveMenuItem(selectedId);
         }
+
+        public async Task<List<MenuItemModel>> GetMenuItemsCategories(string itemCategory, string orderAscDesc)
+        {
+            return await _repository.GetMenuItemsCategories(itemCategory, orderAscDesc);
+        }
     }
 }

@@ -86,5 +86,35 @@ namespace BootcampApp.Repository
 
             return rowsAffected > 0 ? true : false;
         }
+
+        public async Task<List<MenuItemModel>> GetMenuItemsCategories(string itemCategory, string orderAscDesc)
+        {
+
+            var dishes = new List<MenuItemModel>();
+
+
+            using (var conn = new NpgsqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();  //conn.Open(); // Uncomment if you want to use sync
+
+                using (var cmd = new NpgsqlCommand("select mi.\"Id\", \"DishName\", \"PriceOfDish\", \"CategoryId\" from \"MenuItems\" mi " +
+                    " left join \"MenuCategories\" mc on mi.\"CategoryId\" = mc.\"Id\" where mc.\"Name\" = '" + itemCategory +
+                    "' order by mi.\"DishName\" " + orderAscDesc + " limit 5 offset 0;", conn))
+                using (var reader = await cmd.ExecuteReaderAsync()) // cmd.ExecuteReader()  // Uncomment if you want to use sync
+                {
+                    while (await reader.ReadAsync())   // reader.Read(); // Uncomment if you want to use sync
+                    {
+                        MenuItemModel newDish = new MenuItemModel();
+                        newDish.Id = reader.GetGuid(0);
+                        newDish.DishName = reader.GetString(1);
+                        newDish.PriceOfDish = reader.GetDouble(2);
+                        newDish.CategoryId = reader.GetGuid(3);
+                        dishes.Add(newDish);
+                    }
+                }
+            }
+
+            return dishes;
+        }
     }
 }
