@@ -7,9 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BootcampaApp.Service.Common\BootcampaApp.Service.Common.csproj" />
     <ProjectReference Include="..\BootcampApp.Model\BootcampApp.Model.csproj" />
-    <ProjectReference Include="..\BootcampApp.Repository\BootcampApp.Repository.csproj" />
   </ItemGroup>
 
 </Project>

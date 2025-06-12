@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BootcampApp.Model\BootcampApp.Model.csproj" />
+    <ProjectReference Include="..\BootcampApp.Repository.Common\BootcampApp.Repository.Common.csproj" />
   </ItemGroup>
 
 </Project>

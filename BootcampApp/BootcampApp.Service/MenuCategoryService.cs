@@ -8,9 +8,14 @@ using System.Threading.Tasks;
 
 namespace BootcampApp.Service
 {
-    public class MenuCategoryService
+    public class MenuCategoryService : IMenuCategoryService
     {
-        private readonly MenuCategoryRepository _repository = new MenuCategoryRepository();
+        private readonly IMenuCategoryRepository _repository;
+
+        public MenuCategoryService(IMenuCategoryRepository repository)
+        {
+            _repository = repository;
+        }
 
         public async Task<List<MenuCategoryModel>> GetMenuCategory()
         {

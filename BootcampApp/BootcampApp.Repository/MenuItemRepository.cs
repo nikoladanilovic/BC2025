@@ -8,7 +8,7 @@ using Npgsql;
 
 namespace BootcampApp.Repository
 {
-    public class MenuItemRepository
+    public class MenuItemRepository : IMenuItemRepository
     {
         //private static List<MenuItemModel> customers = new List<MenuItemModel>();
         private readonly string _connectionString = "Host=localhost;Port=5432;Username=postgres;Password=admin1235;Database=postgres";

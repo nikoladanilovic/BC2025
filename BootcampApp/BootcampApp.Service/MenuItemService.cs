@@ -8,9 +8,14 @@ using BootcampApp.Repository;
 
 namespace BootcampApp.Service
 {
-    public class MenuItemService
+    public class MenuItemService : IMenuItemService
     {
-        private readonly MenuItemRepository _repository = new MenuItemRepository();
+        private readonly IMenuItemRepository _repository;
+
+        public MenuItemService(IMenuItemRepository repository)
+        {
+            _repository = repository;
+        }
 
         public async Task<List<MenuItemModel>> GetMenuItems()
         {

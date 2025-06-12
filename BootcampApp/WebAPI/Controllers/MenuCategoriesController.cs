@@ -11,19 +11,18 @@ namespace WebAPI.Controllers
     [ApiController]
     public class MenuCategoriesController : Controller
     {
-        private MenuCategoryService service = new MenuCategoryService();
-        private static List<RestaurantOrder> listOfAvailableDishes = new List<RestaurantOrder>();
-        private static List<MenuCategory> listOfMenuCategories = new List<MenuCategory>();
+        private IMenuCategoryService _service;
 
-        private readonly string _connectionString = "Host=localhost;Port=5432;Username=postgres;Password=admin1235;Database=postgres";
-
-        private readonly DataAccess _dataAccess = new DataAccess();
+        public MenuCategoriesController(IMenuCategoryService service)
+        {
+            this._service = service;
+        }
 
         [HttpGet("get-menu-categories")]
         public async Task<IActionResult> GetTheMenuCategories() 
         {
             List<MenuCategoryREST> menuCategoryReturned = new List<MenuCategoryREST>();
-            var menuCategories = await service.GetMenuCategory();
+            var menuCategories = await _service.GetMenuCategory();
             foreach (var category in menuCategories)
             {
                 menuCategoryReturned.Add(new MenuCategoryREST(category.Id, category.Name));
@@ -34,8 +33,8 @@ namespace WebAPI.Controllers
         [HttpPost("post-menu-category")]
         public async Task<IActionResult> CreateMenuCategory([FromBody] MenuCategoryModel category)    
         {
-            bool isAdded = await service.AddMenuCategory(category);
-            var menuCategories = await service.GetMenuCategory();
+            bool isAdded = await _service.AddMenuCategory(category);
+            var menuCategories = await _service.GetMenuCategory();
             return isAdded ? Ok(menuCategories) : StatusCode(500, "Insert failed.");
         }
 
@@ -43,8 +42,8 @@ namespace WebAPI.Controllers
         [HttpPut("change-menu-category-with-id-{selectedId}")]
         public async Task<IActionResult> ChangeMenuCategory(Guid selectedId, [FromBody] MenuCategoryModel category)
         {
-            bool isChanged = await service.ChangeMenuCategory(category, selectedId);
-            var menuCategories = await service.GetMenuCategory();
+            bool isChanged = await _service.ChangeMenuCategory(category, selectedId);
+            var menuCategories = await _service.GetMenuCategory();
             return isChanged ? Ok(menuCategories) : StatusCode(500, "Insert failed.");
 
         }
@@ -52,8 +51,8 @@ namespace WebAPI.Controllers
         [HttpDelete("delete-menu-category-with-id-{selectedId}")]
         public async Task<IActionResult> DeleteMenuCategory(Guid selectedId)
         {
-            bool isRemoved = await service.RemoveMenuCategory(selectedId);
-            var menuCategories = await service.GetMenuCategory();
+            bool isRemoved = await _service.RemoveMenuCategory(selectedId);
+            var menuCategories = await _service.GetMenuCategory();
             return isRemoved ? Ok(menuCategories) : StatusCode(500, "Insert failed.");
         }
 

@@ -9,7 +9,7 @@ using BootcampApp.Model;
 
 namespace BootcampApp.Repository
 {
-    public class MenuCategoryRepository
+    public class MenuCategoryRepository : IMenuCategoryRepository
     {
         private readonly string _connectionString = "Host=localhost;Port=5432;Username=postgres;Password=admin1235;Database=postgres";
         public async Task<List<MenuCategoryModel>> GetMenuCategory()

@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BootcampApp.Repository", "B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BootcampApp.Model", "BootcampApp.Model\BootcampApp.Model.csproj", "{05BDDAE2-33D6-4BBD-8962-BAFE519A2DC6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BootcampaApp.Service.Common", "BootcampaApp.Service.Common\BootcampaApp.Service.Common.csproj", "{CE822E3B-1AC1-45E0-908A-5AA5F96A13CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BootcampApp.Repository.Common", "BootcampApp.Repository.Common\BootcampApp.Repository.Common.csproj", "{B582C521-03AC-43C5-A722-08B7F3B16CE8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{05BDDAE2-33D6-4BBD-8962-BAFE519A2DC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05BDDAE2-33D6-4BBD-8962-BAFE519A2DC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05BDDAE2-33D6-4BBD-8962-BAFE519A2DC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE822E3B-1AC1-45E0-908A-5AA5F96A13CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE822E3B-1AC1-45E0-908A-5AA5F96A13CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE822E3B-1AC1-45E0-908A-5AA5F96A13CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE822E3B-1AC1-45E0-908A-5AA5F96A13CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B582C521-03AC-43C5-A722-08B7F3B16CE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B582C521-03AC-43C5-A722-08B7F3B16CE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B582C521-03AC-43C5-A722-08B7F3B16CE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B582C521-03AC-43C5-A722-08B7F3B16CE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
