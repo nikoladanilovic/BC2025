@@ -165,7 +165,7 @@ namespace BootcampApp.Repository
         {
             using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
-            var cmd = new NpgsqlCommand("select count(*) from \"MenuItems\" where \"CategoryId\" = @categoryId", connection);
+            var cmd = new NpgsqlCommand("select count(*) from \"MenuCategories\" where \"Id\" = @categoryId", connection);
             cmd.Parameters.AddWithValue("categoryId", categoryId);
             int count = Convert.ToInt32(await cmd.ExecuteScalarAsync());
             return count == 0; // If count is 0, the CategoryId is unique
