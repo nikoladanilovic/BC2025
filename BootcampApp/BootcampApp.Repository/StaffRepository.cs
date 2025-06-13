@@ -20,7 +20,7 @@ namespace BootcampApp.Repository
             {
                 await connection.OpenAsync();
 
-                var command = new NpgsqlCommand("SELECT * FROM Staff", connection);
+                var command = new NpgsqlCommand("SELECT * FROM \"Staff\"", connection);
 
                 using var reader = await command.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
@@ -43,7 +43,7 @@ namespace BootcampApp.Repository
             var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            var command = new NpgsqlCommand("SELECT * FROM Staff WHERE Id = @id", connection);
+            var command = new NpgsqlCommand("SELECT * FROM \"Staff\" WHERE \"Id\" = @id", connection);
             command.Parameters.AddWithValue("@id", id);
 
             using var reader = await command.ExecuteReaderAsync();
@@ -64,12 +64,12 @@ namespace BootcampApp.Repository
 
         public async Task AddAsync(StaffModel staff)
         {
-            var connection = new NpgsqlConnection(_connectionString);
+            using var connection = new NpgsqlConnection(_connectionString) ;
+            
             await connection.OpenAsync();
 
-            var command = new NpgsqlCommand(@"
-                INSERT INTO Staff (Id, Name, Role, HireDate, Salary)
-                VALUES (@id, @name, @role, @hireDate, @salary)", connection);
+            var command = new NpgsqlCommand("INSERT INTO \"Staff\" (\"Id\", \"Name\", \"Role\", \"HireDate\", \"Salary\") "+
+            "VALUES (@id, @name, @role, @hireDate, @salary)", connection);
 
             command.Parameters.AddWithValue("@id", staff.Id);
             command.Parameters.AddWithValue("@name", staff.Name);
@@ -78,6 +78,8 @@ namespace BootcampApp.Repository
             command.Parameters.AddWithValue("@salary", staff.Salary);
 
             await command.ExecuteNonQueryAsync();
+            
+                
         }
 
         public async Task UpdateAsync(StaffModel staff)
@@ -85,10 +87,9 @@ namespace BootcampApp.Repository
             var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            var command = new NpgsqlCommand(@"
-                UPDATE Staff 
-                SET Name = @name, Role = @role, HireDate = @hireDate, Salary = @salary
-                WHERE Id = @id", connection);
+            var command = new NpgsqlCommand("UPDATE \"Staff\" " +
+                "SET \"Name\" = @name, \"Role\" = @role, \"HireDate\" = @hireDate, \"Salary\" = @salary "+
+                "WHERE \"Id\" = @id", connection);
 
             command.Parameters.AddWithValue("@id", staff.Id);
             command.Parameters.AddWithValue("@name", staff.Name);
@@ -104,7 +105,7 @@ namespace BootcampApp.Repository
             var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            var command = new NpgsqlCommand("DELETE FROM Staff WHERE Id = @id", connection);
+            var command = new NpgsqlCommand("DELETE FROM \"Staff\" WHERE \"Id\" = @id", connection);
             command.Parameters.AddWithValue("@id", id);
 
             await command.ExecuteNonQueryAsync();
