@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BootcampApp.Model;
 using BootcampApp.Repository;
+using BootcampaApp.Service.Common;
 
 namespace BootcampApp.Service
 {

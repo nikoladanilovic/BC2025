@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BootcampApp.Model;
 
-namespace BootcampaApp.Service.Common
+namespace BootcampApp.Service
 {
     public interface IMenuCategoryService
     {

@@ -2,6 +2,8 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using BootcampApp.Repository;
 using BootcampApp.Service;
+using BootcampaApp.Service.Common;
+using BootcampApp.Repository.Common;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +38,12 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
                 .InstancePerLifetimeScope(); // Equivalent to Scoped
     containerBuilder.RegisterType<MenuItemService>()
                 .As<IMenuItemService>()
+                .InstancePerLifetimeScope(); // Equivalent to Scoped
+    containerBuilder.RegisterType<StaffService>()
+                .As<IStaffService>()
+                .InstancePerLifetimeScope(); // Equivalent to Scoped
+    containerBuilder.RegisterType<StaffRepository>()
+                .As<IStaffRepository>()
                 .InstancePerLifetimeScope(); // Equivalent to Scoped
 });
 

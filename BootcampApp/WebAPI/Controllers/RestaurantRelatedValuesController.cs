@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using BootcampApp.Service;
 using BootcampApp.Model;
 using WebAPI.RESTModels;
+using BootcampaApp.Service.Common;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using WebAPI.RESTModels;
 using BootcampApp.Model;
+using BootcampaApp.Service.Common;
 
 namespace WebAPI.Controllers
 {
