@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BootcampApp.Model;
+using WebAPI.RESTModels;
 
 namespace WebAPI.Controllers
 {
@@ -20,7 +21,12 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             var orders = await _service.GetAllAsync();
-            return Ok(orders);
+            List<OrderREST> orderRESTList = new List<OrderREST>();
+            foreach (var order in orders)
+            {
+                orderRESTList.Add(new OrderREST(order.Id, order.CustomerId, order.OrderDate, order.StaffId, order.TableNumber, order.Customer, order.Staff));
+            }
+            return Ok(orderRESTList);
         }
 
         [HttpGet("{id}")]

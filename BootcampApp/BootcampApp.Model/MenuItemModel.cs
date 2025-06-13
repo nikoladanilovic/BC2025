@@ -17,5 +17,6 @@ namespace BootcampApp.Model
 
         public Guid CategoryId { get; set; }
         public MenuCategoryModel Category { get; set; }
+
     }
 }

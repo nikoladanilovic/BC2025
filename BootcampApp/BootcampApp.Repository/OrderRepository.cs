@@ -15,7 +15,12 @@ namespace BootcampApp.Repository
         public async Task<IEnumerable<OrderModel>> GetAllAsync()
         {
             var orders = new List<OrderModel>();
-            const string query = "SELECT \"Id\", \"CustomerId\", \"OrderDate\", \"StaffId\", \"TableNumber\" FROM \"Orders\"";
+            const string query = "SELECT ord.\"Id\", \"CustomerId\", \"OrderDate\", \"StaffId\", \"TableNumber\", " +
+                "cst.\"Id\", cst.\"Name\", cst.\"Phone\", cst.\"Email\", " +
+                "stf.\"Id\", stf.\"Name\", stf.\"Role\", stf.\"HireDate\", stf.\"Salary\" " +
+                "FROM \"Orders\" ord " +
+                "left join \"Customers\" cst on ord.\"CustomerId\" = cst.\"Id\" " +
+                "left join \"Staff\" stf on ord.\"StaffId\" = stf.\"Id\"";
 
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -30,7 +35,20 @@ namespace BootcampApp.Repository
                     CustomerId = reader.GetGuid(1),
                     OrderDate = reader.GetDateTime(2),
                     StaffId = reader.GetGuid(3),
-                    TableNumber = reader.GetInt32(4)
+                    TableNumber = reader.GetInt32(4),
+
+                    Customer = new CustomerModel { 
+                        Id = reader.GetGuid(5),
+                        Name = reader.GetString(6),
+                        Phone = reader.GetString(7),
+                        Email = reader.GetString(8)},
+
+                    Staff = new StaffModel { 
+                        Id = reader.GetGuid(9),
+                        Name = reader.GetString(10),
+                        Role = reader.GetString(11),
+                        HireDate = reader.GetDateTime(12),
+                        Salary = reader.GetDouble(13)}
                 });
             }
 
@@ -39,7 +57,13 @@ namespace BootcampApp.Repository
 
         public async Task<OrderModel?> GetByIdAsync(Guid id)
         {
-            const string query = "SELECT \"Id\", \"CustomerId\", \"OrderDate\", \"StaffId\", \"TableNumber\" FROM \"Orders\" WHERE \"Id\" = @Id";
+            const string query = "SELECT ord.\"Id\", \"CustomerId\", \"OrderDate\", \"StaffId\", \"TableNumber\", " +
+                "cst.\"Id\", cst.\"Name\", cst.\"Phone\", cst.\"Email\", " +
+                "stf.\"Id\", stf.\"Name\", stf.\"Role\", stf.\"HireDate\", stf.\"Salary\" " +
+                "FROM \"Orders\" ord " +
+                "left join \"Customers\" cst on ord.\"CustomerId\" = cst.\"Id\" " +
+                "left join \"Staff\" stf on ord.\"StaffId\" = stf.\"Id\" " +
+                "WHERE ord.\"Id\" = @Id";
 
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -55,7 +79,24 @@ namespace BootcampApp.Repository
                     CustomerId = reader.GetGuid(1),
                     OrderDate = reader.GetDateTime(2),
                     StaffId = reader.GetGuid(3),
-                    TableNumber = reader.GetInt32(4)
+                    TableNumber = reader.GetInt32(4),
+
+                    Customer = new CustomerModel
+                    {
+                        Id = reader.GetGuid(5),
+                        Name = reader.GetString(6),
+                        Phone = reader.GetString(7),
+                        Email = reader.GetString(8)
+                    },
+
+                    Staff = new StaffModel
+                    {
+                        Id = reader.GetGuid(9),
+                        Name = reader.GetString(10),
+                        Role = reader.GetString(11),
+                        HireDate = reader.GetDateTime(12),
+                        Salary = reader.GetDouble(13)
+                    }
                 };
             }
 
