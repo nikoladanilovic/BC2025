@@ -26,14 +26,58 @@ namespace BootcampApp.Service
         }
         public async Task AddAsync(StaffModel staff)
         {
+            if (staff.Id == Guid.Empty)
+            {
+                staff.Id = Guid.NewGuid(); // Ensure a new ID
+            }
+            else
+            {
+                // Optionally, you could check if the ID already exists and handle accordingly
+                var existingStaff = await _staffRepository.GetByIdAsync(staff.Id);
+                if (existingStaff != null)
+                {
+                    throw new InvalidOperationException("Staff with this ID already exists.");
+                }
+            }
+            string hireDate = staff.HireDate.ToString();
+            if (string.IsNullOrWhiteSpace(staff.Name) || string.IsNullOrWhiteSpace(staff.Role) || staff.Salary <= 0)
+            {
+                throw new ArgumentException("Invalid staff details provided.");
+            }
             await _staffRepository.AddAsync(staff);
         }
         public async Task UpdateAsync(StaffModel staff)
         {
+            if (staff.Id == Guid.Empty)
+            {
+                staff.Id = Guid.NewGuid(); // Ensure a new ID
+            }
+            else
+            {
+                // Optionally, you could check if the ID already exists and handle accordingly
+                var existingStaff = await _staffRepository.GetByIdAsync(staff.Id);
+                if (existingStaff != null)
+                {
+                    throw new InvalidOperationException("Staff with this ID already exists.");
+                }
+            }
+            if (string.IsNullOrWhiteSpace(staff.Name) || string.IsNullOrWhiteSpace(staff.Role) || staff.HireDate == default || staff.Salary <= 0)
+            {
+                throw new ArgumentException("Invalid staff details provided.");
+            }
             await _staffRepository.UpdateAsync(staff);
         }
         public async Task DeleteAsync(Guid id)
         {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentException("Invalid staff ID provided.");
+            }
+            var existingStaff = await _staffRepository.GetByIdAsync(id);
+            if (existingStaff == null)
+            {
+                throw new InvalidOperationException("Staff with this ID does not exist.");
+            }
             await _staffRepository.DeleteAsync(id);
         }
         

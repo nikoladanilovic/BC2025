@@ -51,6 +51,12 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     containerBuilder.RegisterType<CustomerRepository>()
                 .As<ICustomerRepository>()
                 .InstancePerLifetimeScope(); // Equivalent to Scoped
+    containerBuilder.RegisterType<OrderService>()
+                .As<IOrderService>()
+                .InstancePerLifetimeScope(); // Equivalent to Scoped
+    containerBuilder.RegisterType<OrderRepository>()
+                .As<IOrderRepository>()
+                .InstancePerLifetimeScope(); // Equivalent to Scoped
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
