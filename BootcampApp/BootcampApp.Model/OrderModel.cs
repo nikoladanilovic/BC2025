@@ -13,7 +13,8 @@ namespace BootcampApp.Model
         public DateTime OrderDate { get; set; }
         public Guid StaffId { get; set; }  // connection 1 to many
         public int TableNumber { get; set; }
-        //public CustomerModel Customer { get; set; } 
-        //public StaffModel Staff { get; set; } 
+        public CustomerModel? Customer { get; set; } 
+        public StaffModel? Staff { get; set; } 
+        
     }
 }

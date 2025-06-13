@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BootcampApp.Model;
+using WebAPI.RESTModels;
 
 namespace WebAPI.Controllers
 {
@@ -20,7 +21,12 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             var customers = await _service.GetAllAsync();
-            return Ok(customers);
+            List<CustomerREST> customersREST = new List<CustomerREST>();
+            foreach (var customer in customers)
+            {
+                customersREST.Add(new CustomerREST(customer.Id, customer.Name, customer.Phone, customer.Email));
+            }
+            return Ok(customersREST);
         }
 
         [HttpGet("{id}")]
@@ -29,7 +35,8 @@ namespace WebAPI.Controllers
             var customer = await _service.GetByIdAsync(id);
             if (customer == null)
                 return NotFound();
-            return Ok(customer);
+            CustomerREST customerREST = new CustomerREST(customer.Id, customer.Name, customer.Phone, customer.Email);
+            return Ok(customerREST);
         }
 
         [HttpPost]

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using BootcampApp.Model;
 using BootcampApp.Service;
 using BootcampaApp.Service.Common;
+using WebAPI.RESTModels;
 
 namespace WebAPI.Controllers
 {
@@ -22,7 +23,12 @@ namespace WebAPI.Controllers
         public async Task<ActionResult<List<StaffModel>>> GetAll()
         {
             var staffList = await _staffService.GetAllAsync();
-            return Ok(staffList);
+            List<StaffREST> staffRESTList = new List<StaffREST>();
+            foreach (var staff in staffList)
+            {
+                staffRESTList.Add(new StaffREST(staff.Id, staff.Name, staff.Role, staff.HireDate, staff.Salary));
+            }
+            return Ok(staffRESTList);
         }
 
         [HttpGet("{id}")]
@@ -32,7 +38,8 @@ namespace WebAPI.Controllers
             if (staff == null)
                 return NotFound();
 
-            return Ok(staff);
+            StaffREST staffREST = new StaffREST(staff.Id, staff.Name, staff.Role, staff.HireDate, staff.Salary);
+            return Ok(staffREST);
         }
 
         [HttpPost]
