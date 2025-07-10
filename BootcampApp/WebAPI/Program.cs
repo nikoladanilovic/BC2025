@@ -1,15 +1,31 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using BootcampApp.Repository;
-using BootcampApp.Service;
 using BootcampaApp.Service.Common;
+using BootcampApp.Repository;
 using BootcampApp.Repository.Common;
+using BootcampApp.Service;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole(); // Log to console
+builder.Logging.AddDebug();   // Log to debug window (VS)
+
 // 1. Replace default ServiceProvider with Autofac
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy.WithOrigins("http://localhost:5173")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+});
+
 
 // Add services to the container.
 
@@ -57,11 +73,30 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     containerBuilder.RegisterType<OrderRepository>()
                 .As<IOrderRepository>()
                 .InstancePerLifetimeScope(); // Equivalent to Scoped
+    containerBuilder.RegisterType<AdminService>()
+                .As<IAdminService>()
+                .InstancePerLifetimeScope(); // Equivalent to Scoped
+    containerBuilder.RegisterType<AdminRepository>()
+                .As<IAdminRepository>()
+                .InstancePerLifetimeScope(); // Equivalent to Scoped
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes("your-very-long-secret-key-that-is-at-least-33-bytes"))
+        };
+    });
 
 var app = builder.Build();
 
@@ -71,9 +106,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
 
+app.UseAuthorization();
 app.UseAuthorization();
 
 app.MapControllers();

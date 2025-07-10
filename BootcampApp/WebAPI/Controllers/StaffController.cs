@@ -20,7 +20,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<StaffModel>>> GetAll()
+        public async Task<ActionResult> GetAll()
         {
             var staffList = await _staffService.GetAllAsync();
             List<StaffREST> staffRESTList = new List<StaffREST>();
@@ -49,7 +49,7 @@ namespace WebAPI.Controllers
                 return BadRequest("Staff data is required.");
 
             await _staffService.AddAsync(staff);
-            return CreatedAtAction(nameof(GetById), new { id = staff.Id }, staff);
+            return await GetAll();
         }
 
         [HttpPut("{id}")]
@@ -74,7 +74,7 @@ namespace WebAPI.Controllers
                 return NotFound();
 
             await _staffService.DeleteAsync(id);
-            return NoContent();
+            return await GetAll();
         }
     }
 }

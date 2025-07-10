@@ -5,6 +5,7 @@ using BootcampApp.Service;
 using BootcampApp.Model;
 using WebAPI.RESTModels;
 using BootcampaApp.Service.Common;
+using Microsoft.Extensions.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,10 +16,12 @@ namespace WebAPI.Controllers
     public class RestaurantRelatedValuesController : ControllerBase
     {
         private IMenuItemService _service;
+        private readonly ILogger<RestaurantRelatedValuesController> _logger;
 
-        public RestaurantRelatedValuesController(IMenuItemService service)
+        public RestaurantRelatedValuesController(IMenuItemService service, ILogger<RestaurantRelatedValuesController> logger)
         {
             this._service = service;
+            _logger = logger;
         }
 
         [HttpGet("get-menu-items")]
@@ -36,6 +39,14 @@ namespace WebAPI.Controllers
         [HttpPost("post-menu-item")]     
         public async Task<IActionResult> CreateMenuItem([FromBody] MenuItemModel menuItem)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                _logger.LogError("Invalid model: {Errors}", string.Join("; ", errors));
+                return BadRequest(ModelState);
+            }
+
             bool isAdded = await _service.AddMenuItem(menuItem);
             var menuItems = await _service.GetMenuItems();
             return isAdded ? Ok(menuItems) : StatusCode(500, "Insert failed.");

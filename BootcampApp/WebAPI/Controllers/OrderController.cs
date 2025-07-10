@@ -35,8 +35,8 @@ namespace WebAPI.Controllers
             var order = await _service.GetByIdAsync(id);
             if (order == null)
                 return NotFound();
-
-            return Ok(order);
+            OrderREST orderREST = new OrderREST(order.Id, order.CustomerId, order.OrderDate, order.StaffId, order.TableNumber, order.Customer, order.Staff);
+            return Ok(orderREST);
         }
 
         [HttpPost]

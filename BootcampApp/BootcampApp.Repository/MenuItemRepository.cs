@@ -67,14 +67,15 @@ namespace BootcampApp.Repository
             }
             else
             {
+
                 var cmd = new NpgsqlCommand("INSERT INTO \"MenuItems\" VALUES (uuid_generate_v4(), @name, @price, @categoryId);", connection);
                 cmd.Parameters.AddWithValue("name", menuItem.DishName);
                 cmd.Parameters.AddWithValue("price", menuItem.PriceOfDish);
                 cmd.Parameters.AddWithValue("categoryId", menuItem.CategoryId);
 
                 rowsAffected = await cmd.ExecuteNonQueryAsync();
+
             }
-                
 
             return rowsAffected > 0 ? true : false;
         }

@@ -34,10 +34,13 @@ namespace BootcampApp.Service
             {
                 // Optionally, you could check if the ID already exists and handle accordingly
                 var existingStaff = await _staffRepository.GetByIdAsync(staff.Id);
-                if (existingStaff != null)
+                while (existingStaff != null)
                 {
-                    throw new InvalidOperationException("Staff with this ID already exists.");
+                    staff.Id = Guid.NewGuid();
+                    existingStaff = await _staffRepository.GetByIdAsync(staff.Id);
                 }
+                
+                
             }
             string hireDate = staff.HireDate.ToString();
             if (string.IsNullOrWhiteSpace(staff.Name) || string.IsNullOrWhiteSpace(staff.Role) || staff.Salary <= 0)
