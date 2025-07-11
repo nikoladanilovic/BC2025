@@ -95,7 +95,7 @@ namespace WebAPI.Controllers
             return Ok(GetAll());
         }
 
-        [HttpGet("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AdminModel loginModel)
         {
             if (loginModel == null || string.IsNullOrEmpty(loginModel.Username) || string.IsNullOrEmpty(loginModel.Password))
@@ -128,7 +128,8 @@ namespace WebAPI.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error registering admin");
             }
-            return CreatedAtAction(nameof(GetById), new { id = admin.Id }, admin);
+            var token = GenerateJwtToken(admin.Username);
+            return Ok(new { Token = token });
         }
 
         [Authorize]
